@@ -2,26 +2,21 @@ FROM python:3.11-slim
 
 WORKDIR /dbt
 
-# Instalar dependencias del sistema
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN pip install "protobuf<4.21.0"
-
-# Instalar dbt-redshift
+# 1. Instalar dbt primero
 RUN pip install --no-cache-dir \
-    dbt-redshift==1.7.0 \
-    dbt-core==1.7.0
+    dbt-core==1.7.0 \
+    dbt-redshift==1.7.0
 
-# Copiar proyecto DBT
+# 2. Forzar la versión de protobuf compatible DESPUÉS de instalar dbt
+# La versión <5.0.0 es la que evita el error del argumento 'including_default_value_fields'
+RUN pip install "protobuf>=3.20.0,<5.0.0"
+
 COPY . /dbt/
-
-# Configurar permisos
 RUN chmod -R 755 /dbt
-
-# Script de ejecución
 COPY entrypoint.sh /dbt/entrypoint.sh
 RUN chmod +x /dbt/entrypoint.sh
 
