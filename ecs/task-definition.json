@@ -1,0 +1,48 @@
+{
+  "family": "dbt-redshift-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::093193655543:role/ecs-task-execution-role",
+  "taskRoleArn": "arn:aws:iam::093193655543:role/dbt-task-role",
+  "containerDefinitions": [
+    {
+      "name": "dbt-container",
+      "image": "093193655543.dkr.ecr.us-east-1.amazonaws.com/dbt-redshift:latest",
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/dbt-redshift",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "dbt"
+        }
+      },
+      "environment": [
+        {
+          "name": "DBT_PROFILES_DIR",
+          "value": "/dbt"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "REDSHIFT_HOST",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8/host"
+        },
+        {
+          "name": "REDSHIFT_USER",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8/user"
+        },
+        {
+          "name": "REDSHIFT_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8/password"
+        },
+        {
+          "name": "REDSHIFT_DATABASE",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8/database"
+        }
+      ]
+    }
+  ]
+}

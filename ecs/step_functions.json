@@ -1,0 +1,173 @@
+{
+  "Comment": "DBT Pipeline - Seeds → Staging → Dimensions → Facts",
+  "StartAt": "LoadSeeds",
+  "States": {
+    "LoadSeeds": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::ecs:runTask.sync",
+      "Parameters": {
+        "LaunchType": "FARGATE",
+        "Cluster": "arn:aws:ecs:us-east-1:093193655543:cluster/dbt-cluster",
+        "TaskDefinition": "arn:aws:ecs:us-east-1:093193655543:task-definition/dbt-redshift-task",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "Subnets": ["subnet-xxx", "subnet-yyy"],
+            "SecurityGroups": ["sg-xxx"],
+            "AssignPublicIp": "ENABLED"
+          }
+        },
+        "Overrides": {
+          "ContainerOverrides": [
+            {
+              "Name": "dbt-container",
+              "Command": ["dbt", "seed", "--profiles-dir", "."]
+            }
+          ]
+        }
+      },
+      "Next": "RunStaging",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "FailureNotification"
+        }
+      ]
+    },
+    "RunStaging": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::ecs:runTask.sync",
+      "Parameters": {
+        "LaunchType": "FARGATE",
+        "Cluster": "arn:aws:ecs:us-east-1:093193655543:cluster/dbt-cluster",
+        "TaskDefinition": "arn:aws:ecs:us-east-1:093193655543:task-definition/dbt-redshift-task",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "Subnets": ["subnet-xxx", "subnet-yyy"],
+            "SecurityGroups": ["sg-xxx"],
+            "AssignPublicIp": "ENABLED"
+          }
+        },
+        "Overrides": {
+          "ContainerOverrides": [
+            {
+              "Name": "dbt-container",
+              "Command": ["dbt", "run", "--models", "staging.*", "--profiles-dir", "."]
+            }
+          ]
+        }
+      },
+      "Next": "RunDimensions",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "FailureNotification"
+        }
+      ]
+    },
+    "RunDimensions": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::ecs:runTask.sync",
+      "Parameters": {
+        "LaunchType": "FARGATE",
+        "Cluster": "arn:aws:ecs:us-east-1:093193655543:cluster/dbt-cluster",
+        "TaskDefinition": "arn:aws:ecs:us-east-1:093193655543:task-definition/dbt-redshift-task",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "Subnets": ["subnet-xxx", "subnet-yyy"],
+            "SecurityGroups": ["sg-xxx"],
+            "AssignPublicIp": "ENABLED"
+          }
+        },
+        "Overrides": {
+          "ContainerOverrides": [
+            {
+              "Name": "dbt-container",
+              "Command": ["dbt", "run", "--models", "dimensions.*", "--profiles-dir", "."]
+            }
+          ]
+        }
+      },
+      "Next": "RunFacts",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "FailureNotification"
+        }
+      ]
+    },
+    "RunFacts": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::ecs:runTask.sync",
+      "Parameters": {
+        "LaunchType": "FARGATE",
+        "Cluster": "arn:aws:ecs:us-east-1:093193655543:cluster/dbt-cluster",
+        "TaskDefinition": "arn:aws:ecs:us-east-1:093193655543:task-definition/dbt-redshift-task",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "Subnets": ["subnet-xxx", "subnet-yyy"],
+            "SecurityGroups": ["sg-xxx"],
+            "AssignPublicIp": "ENABLED"
+          }
+        },
+        "Overrides": {
+          "ContainerOverrides": [
+            {
+              "Name": "dbt-container",
+              "Command": ["dbt", "run", "--models", "facts.*", "--profiles-dir", "."]
+            }
+          ]
+        }
+      },
+      "Next": "RunTests",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "FailureNotification"
+        }
+      ]
+    },
+    "RunTests": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::ecs:runTask.sync",
+      "Parameters": {
+        "LaunchType": "FARGATE",
+        "Cluster": "arn:aws:ecs:us-east-1:093193655543:cluster/dbt-cluster",
+        "TaskDefinition": "arn:aws:ecs:us-east-1:093193655543:task-definition/dbt-redshift-task",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "Subnets": ["subnet-xxx", "subnet-yyy"],
+            "SecurityGroups": ["sg-xxx"],
+            "AssignPublicIp": "ENABLED"
+          }
+        },
+        "Overrides": {
+          "ContainerOverrides": [
+            {
+              "Name": "dbt-container",
+              "Command": ["dbt", "test", "--profiles-dir", "."]
+            }
+          ]
+        }
+      },
+      "Next": "SuccessNotification"
+    },
+    "SuccessNotification": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:us-east-1:093193655543:dbt-pipeline-success",
+        "Message": "✅ DBT Pipeline completado exitosamente"
+      },
+      "End": true
+    },
+    "FailureNotification": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:us-east-1:093193655543:dbt-pipeline-failure",
+        "Message": "❌ DBT Pipeline falló"
+      },
+      "End": true
+    }
+  }
+}
