@@ -1,0 +1,14 @@
+fargateredshift:
+  target: dev
+  outputs:
+    dev:
+      type: redshift
+      host: "{{ env_var('REDSHIFT_HOST', 'default-workgroup.093193655543.us-east-1.redshift-serverless.amazonaws.com') }}"
+      user: "{{ env_var('REDSHIFT_USER', 'admin') }}"
+      password: "{{ env_var('REDSHIFT_PASSWORD', 'HFDSHsuxip121$') }}"
+      port: 5439
+      dbname: "{{ env_var('REDSHIFT_DATABASE', 'dev') }}"
+      schema: dimensions
+      threads: 4
+      keepalives_idle: 240
+      connect_timeout: 100

@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Staging de órdenes limpias"
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_customers
+    description: "Staging de clientes"
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null

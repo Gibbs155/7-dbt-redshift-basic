@@ -1,0 +1,33 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw_data
+    tables:
+      - name: raw_categories      
+      - name: raw_customers      
+      - name: raw_orders
+      - name: raw_products
+
+  - name: stg
+    schema: staging
+    tables:
+      - name: stg_orders      
+      - name: stg_customers
+
+  - name: dim
+    schema: dimensions
+    tables:
+      - name: dim_customers      
+      - name: dim_products
+
+
+# sources:
+#   - name: raw
+#     database: "{{ env_var('REDSHIFT_DATABASE' , 'dev') }}"
+#     schema: raw_data
+#     tables:
+#       - name: orders
+#         identifier: raw_orders
+#       - name: customers
+#         identifier: raw_customers
