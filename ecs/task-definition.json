@@ -28,19 +28,19 @@
       "secrets": [
         {
           "name": "REDSHIFT_HOST",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8/host"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8:host::"
         },
         {
           "name": "REDSHIFT_USER",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8/user"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8:user::"
         },
         {
           "name": "REDSHIFT_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8/password"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8:password::"
         },
         {
           "name": "REDSHIFT_DATABASE",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8/database"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8:database::"
         }
       ]
     }
