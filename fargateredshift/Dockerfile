@@ -8,6 +8,8 @@ RUN apt-get update && \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip install "protobuf<4.21.0"
+
 # Instalar dbt-redshift
 RUN pip install --no-cache-dir \
     dbt-redshift==1.7.0 \

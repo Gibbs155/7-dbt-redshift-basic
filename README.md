@@ -52,3 +52,4 @@ git branch -M main
 git remote add origin https://github.com/Gibbs155/7-dbt-redshift-basic.git
 git pull origin main --rebase
 git push -u origin main
+git push origin main

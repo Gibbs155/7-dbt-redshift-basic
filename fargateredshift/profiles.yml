@@ -11,4 +11,4 @@ fargateredshift:
       schema: raw_data
       threads: 4
       keepalives_idle: 240
-      connect_timeout: 10
+      connect_timeout: 120
