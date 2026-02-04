@@ -28,7 +28,7 @@ default-workgroup.093193655543.us-east-1.redshift-serverless.amazonaws.com
 
 
 
-scp -i "keys.pem" -r "D:\PROYECTOS-Y-POCS\DATA-ENGINEER-AWS\16-aws-labs\2-dbt-redshift-basic\fargateredshift" ubuntu@100.53.133.17:/home/ubuntu/
+scp -i "keys.pem" -r . ubuntu@3.88.179.195:/home/ubuntu/fargateredshift
 
 
 dbt deps

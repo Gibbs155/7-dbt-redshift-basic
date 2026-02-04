@@ -6,7 +6,7 @@
       "Action": [
         "secretsmanager:GetSecretValue"
       ],
-      "Resource": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift/*"
+      "Resource": "arn:aws:secretsmanager:us-east-1:093193655543:secret:redshift-6Zu6m8/*"
     },
     {
       "Effect": "Allow",
