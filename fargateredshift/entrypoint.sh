@@ -13,7 +13,11 @@ dbt seed --profiles-dir .
 
 # Ejecutar modelos
 echo "🔨 Running models..."
-dbt run --profiles-dir . --full-refresh
+# dbt run --profiles-dir . --full-refresh
+dbt run --select staging.* --profiles-dir profiles/target_staging
+dbt run --select dimensions.* --profiles-dir profiles/target_dimensions
+dbt run --select facts.*    --profiles-dir profiles/target_facts
+
 
 # Tests
 echo "✅ Running tests..."
