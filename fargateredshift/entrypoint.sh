@@ -22,6 +22,11 @@ dbt run --select facts.*    --profiles-dir profiles/target_facts
 
 # Tests
 echo "✅ Running tests..."
-dbt test --profiles-dir .
+# Test para Staging
+dbt test --select staging.* --profiles-dir profiles/target_staging
+# Test para Dimensions
+dbt test --select dimensions.* --profiles-dir profiles/target_dimensions
+# Test para Facts
+dbt test --select facts.* --profiles-dir profiles/target_facts
 
 echo "✨ DBT Run completed!"
