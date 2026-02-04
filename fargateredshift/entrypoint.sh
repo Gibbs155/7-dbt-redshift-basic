@@ -6,6 +6,7 @@ echo "🚀 Starting DBT Run in Fargate..."
 # Debug
 dbt --version
 dbt debug
+dbt deps 
 
 # Cargar seeds
 echo "📦 Loading seeds..."
