@@ -6,6 +6,7 @@ def xml_to_dbt(xml_file):
     root = tree.getroot()
     
     build_name = root.get('name').lower()
+    build_name = root.get('name').lower()
     
     # 1. Extraer SQL Base (Source)
     sql_raw = root.find(".//sql_statement").text.strip()
@@ -30,8 +31,12 @@ def xml_to_dbt(xml_file):
         })
 
     # 4. Construir el archivo SQL de dbt
-    dbt_sql = f"""-- Modelo generado automáticamente de {xml_file}
-{{{{ config(materialized='incremental', unique_key='cargo_id') }}}}
+    dbt_sql = f"""-- Modelo {build_name} (Carga Total)
+{{{{ config(
+    materialized='table',
+    dist='auto',
+    sort='auto'
+) }}}}
 
 WITH base_source AS (
     {sql_raw.replace('$LAST_RUN_DATE', "(SELECT max(process_date) FROM {{ this }})")}
@@ -55,7 +60,8 @@ FROM transformed t
         dbt_sql += f"LEFT JOIN {{{{ ref('{l['table']}') }}}} lkp_{i} ON t.{l['left']} = lkp_{i}.{l['right']}\n"
 
     # Guardar archivo
-    with open(f"{build_name}.sql", "w") as f:
+    output_path = f"{build_name}.sql"
+    with open(output_path, "w") as f:
         f.write(dbt_sql)
     
     print(f"✅ Modelo dbt generado: {build_name}.sql")
