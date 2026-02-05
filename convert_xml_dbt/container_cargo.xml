@@ -1,0 +1,63 @@
+<build name="BLD_ES_INIT_FACT_CONTAINER_CARGO" type="fact">
+    
+    <datasource name="CNX_SA_INIT_OR_DS_CONTAINER">
+        <type>SQL</type>
+        <connection>CONN_STAGE_DB</connection>
+        <sql_statement>
+            <![CDATA[
+            SELECT 
+                T1.CONTAINER_NO,
+                T1.SHIPPING_CODE,
+                T1.TRADE_CODE,
+                T1.LOAD_DATE,
+                T1.TOTAL_WEIGHT_KG,
+                T1.QTY_BOXES
+            FROM STG_CONTAINER_CARGO T1
+            WHERE T1.PROCESS_DATE > $LAST_RUN_DATE
+            ]]>
+        </sql_statement>
+    </datasource>
+
+    <lookup name="LKP_SHIPPING_LINE">
+        <source_table>DIM_WORLD_SHIPPING</source_table>
+        <join_type>LEFT</join_type>
+        <key_match>
+            <left>SHIPPING_CODE</left>
+            <right>SHIP_CODE_NK</right>
+        </key_match>
+        <return_column>SHIPPING_ID</return_column> 
+        <default_value>-1</default_value> </lookup>
+
+    <lookup name="LKP_TRADE_DIR">
+        <source_table>DIM_TRADE_DIRECTION</source_table>
+        <key_match>
+            <left>TRADE_CODE</left>
+            <right>TRADE_CODE_NK</right>
+        </key_match>
+        <return_column>TRADE_ID</return_column>
+    </lookup>
+
+    <transformation_model>
+        <derivation name="PESO_TONELADAS">
+            <expression>TOTAL_WEIGHT_KG / 1000</expression>
+            <datatype>decimal</datatype>
+        </derivation>
+        
+        <derivation name="ID_TIEMPO_EMBARQUE">
+            <expression>DM_DATE_KEY(LOAD_DATE)</expression>
+        </derivation>
+    </transformation_model>
+
+    <delivery name="FACT_CONTAINER_CARGO">
+        <target_table>FACT_CONTAINER_CARGO</target_table>
+        <update_method>MERGE</update_method> <mapping>
+            <column target="CARGO_ID" source="SURROGATE_KEY_GEN" />
+            <column target="SHIPPING_ID" source="LKP_SHIPPING_LINE" />
+            <column target="TRADE_ID" source="LKP_TRADE_DIR" />
+            <column target="TIME_ID" source="ID_TIEMPO_EMBARQUE" />
+            <column target="METRIC_TONS" source="PESO_TONELADAS" />
+            <column target="BOX_QTY" source="QTY_BOXES" />
+        </mapping>
+    </delivery>
+
+</build>
