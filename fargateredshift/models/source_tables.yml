@@ -2,6 +2,7 @@ version: 2
 
 sources:
   - name: raw
+    database: awsdatacatalog
     schema: raw_data
     tables:
       - name: raw_categories      
