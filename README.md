@@ -24,7 +24,7 @@ dbt_ecommerce/
 
 
 dbt init fargateredshift
-default-workgroup.093193655543.us-east-1.redshift-serverless.amazonaws.com
+demoredshift.093193655543.us-east-1.redshift-serverless.amazonaws.com
 
 
 
